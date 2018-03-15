@@ -201,7 +201,7 @@
 </div>
 </body>
 <script type="text/javascript">
-	var ws = new WebSocket("ws://192.168.0.102:9501")
+	var ws = new WebSocket("ws://127.0.0.1:9501")
 	ws.open = function() {
 		console.log('link start!')
 	}
@@ -221,6 +221,7 @@
 			$('.head').append('<h2>'+data.name+'</h2><p>testettertreterteter</p>')
 			window.fd_mine = data.fd
 		} else if (data.type == 2) {
+			console.log(data);
 			if (data.fd == fd_mine) {
 				$('.msg-list').append('<li class="mine-msg layui-col-xs12"><div class="head-img"><img src="/static/picture/'+data.avatar+'.jpg" /><span><i>'+data.date+'</i>'+data.name+'</span><p class="msg-con layui-bg-blue">'+data.msg+'</p></div></li>')
 			} else {
@@ -241,8 +242,7 @@
 		}
 	})
 	$('.friend-list').hide()
-	function open_chat(fd, name) {
-		console.log(name)
+	function open_chat(fd_other, name) {
 		layui.use('layer', function() {
 			var layer = layui.layer
 			layer.open({
@@ -253,7 +253,7 @@
 				maxmin:true,
 				shade:0,
 				title:[name,'height:60px;font-size:28px'],
-				content: '<div class="layui-fluid"><div class="layui-row"><div class="layui-col-xs12" style="height: 300px;"><ul class="msg-list"></ul></div></div><div class="layui-row"><div class="layui-col-m12" style="height: 38px;border-top: 1px solid #f1f1f1;"><button type="button" style="border:none;background: none;"><i class="layui-icon" style="font-size: 28px;line-height: 38px;">&#xe60c;</i></button></div></div><div class="layui-row"><div class="layui-col-xs12 send-msg"><textarea name="msg" placeholder="请输入内容" class="layui-textarea"></textarea></div></div><div class="layui-row"><button class="layui-btn" onclick="send('+fd+')">发送</button></div></div>'
+				content: '<div class="layui-fluid"><div class="layui-row"><div class="layui-col-xs12" style="height: 300px;"><ul class="msg-list"></ul></div></div><div class="layui-row"><div class="layui-col-m12" style="height: 38px;border-top: 1px solid #f1f1f1;"><button type="button" style="border:none;background: none;"><i class="layui-icon" style="font-size: 28px;line-height: 38px;">&#xe60c;</i></button></div></div><div class="layui-row"><div class="layui-col-xs12 send-msg"><textarea name="msg" placeholder="请输入内容" class="layui-textarea"></textarea></div></div><div class="layui-row"><button class="layui-btn" onclick="send('+fd_other+')">发送</button></div></div>'
 			});
 		})
 	}
@@ -261,14 +261,14 @@
 		var element = layui.element
 		$('.layui-tab-bar').hide()
 	})
-	function send(fd) {
+	function send(fd_other) {
 		var msg = $('.layui-textarea').val()
 		if (msg.length>30) {
 			alert('超出字数限制')
 		} else if (msg.length<1) {
 			alert('请输入内容')
 		} else {
-			var txt = {'type':'2','msg':msg,'fd_other':fd}
+			var txt = {'type':'2','msg':msg,'fd_other':fd_other}
 			ws.send(JSON.stringify(txt))
 			$('.layui-textarea').val('');
 		}

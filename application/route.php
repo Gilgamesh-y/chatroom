@@ -10,15 +10,5 @@
 // +----------------------------------------------------------------------
 
 return [
-	//index
-	'/' => 'index/index',
-    '/:id' => 'index/article',
-    'about' => 'index/about',
-    'message' => 'index/message',
-    'link' => 'index/link',
-    'music' => 'index/music',
-    'psn' => 'index/psn',
-    //admin
-    'admin' => 'admin/index',
-    'login' => 'index/login',
+
 ];
