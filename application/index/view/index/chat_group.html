@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="/static/extend/layui/css/layui.css">
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/extend/layui/layui.js"></script>
+	<style type="text/css">
+		
+	</style>
+</head>
+<body>
+	
+</body>
+<script type="text/javascript">
+	var fd = {$fd};
+	var ws = new WebSocket("ws://192.168.0.102:9501")
+	ws.open = function() {
+		console.log('link start!')
+	}
+	ws.onclose = function() {
+		console.log('link stop~')
+	}
+	ws.onmessage = function(e) {
+		var data = JSON.parse(e.data)
+		console.log(data)
+		console.log(fd)
+		if (data.type == 2) {
+			if (data.fd_other == fd)
+				$('.msg-list').append('<li class="mine-msg layui-col-xs12"><div class="head-img"><img src="/static/picture/'+data.avatar+'.jpg" /><span><i>'+data.date+'</i>'+data.name+'</span><p class="msg-con layui-bg-blue">'+data.msg+'</p></div></li>')
+			} else {
+				$('.msg-list').append('<li class="others-msg layui-col-xs12"><div class="head-img"><img src="/static/picture/'+data.avatar+'.jpg" /><span><i>'+data.date+'</i>'+data.name+'</span><p class="msg-con layui-bg-blue">'+data.msg+'</p></div></li>')
+			}
+		}
+	}
+	ws.onerror = function() {
+		alert('link error!!!')
+	}
+	function send() {
+		var msg = $('.layui-textarea').val()
+		if (msg.length>30) {
+			alert('超出字数限制')
+		} else if (msg.length<1) {
+			alert('请输入内容')
+		} else {
+			var txt = {'type':'2','msg':msg,'fd_other':fd}
+			ws.send(JSON.stringify(txt))
+			$('.layui-textarea').val('');
+		}
+	}
+	$(document).keypress(function(e) {
+		if (e.which == 13) {
+			send()
+		}
+	})
+</script>
+</html>

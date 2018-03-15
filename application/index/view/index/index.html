@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="/static/extend/layui/css/layui.css">
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/extend/layui/layui.js"></script>
+	<style type="text/css">
+		.friend-list {
+			border: 1px solid #d9d9d9;
+			background: #f6f6f6;
+			color: #333;
+		}
+		.head {
+			background: #d6d6d6;
+			padding: 8px 15px;
+		}
+		.head h2 {
+			margin-bottom: 8px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.head p {
+			position: relative;
+			left: -6px;
+			width: 100%;
+			font-size: 16px;
+			height: 26px;
+			line-height: 26px;
+			padding: 0 5px;
+			border: 1px solid transparent;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.layui-tab-title li .layui-icon {
+			font-size: 30px;
+			color: #565656;
+		}
+		.layui-tab-content img {
+			float: left;
+			width: 36px;
+			height: 36px;
+			border-radius: 100%;
+			margin-right: 10px;
+		}
+		.layui-tab-content p {
+			color: #999;
+			line-height: 18px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.list-item {
+			margin-bottom: 10px;
+		}
+		.list-item:hover {
+			cursor: pointer;
+		}
+		button:hover {
+			cursor: pointer;
+		}
+		.msg-list {
+			height: 300px;
+			overflow: auto;
+		}
+		.msg-list li {
+			margin: 10px 0;
+		}
+		.msg-list li p {
+			position: relative;
+			display: inline-block;
+			line-height: 22px;
+			margin-top: 10px;
+			padding: 8px 15px;
+			border-radius: 3px;
+			word-break: break-all;
+			color: #fff;
+		}
+		.msg-list li p:after {
+			border-top-color: #1e9fff;
+			content: '';
+			position: absolute;
+			top: 13px;
+			width: 0;
+			height: 0;
+			border-style: solid dashed dashed;
+			border-color: #1e9fff transparent transparent;
+			overflow: hidden;
+			border-width: 10px;
+		}
+		.msg-list .head-img img{
+			width: 40px;
+			height: 40px;
+			border-radius: 100%;
+		}
+		.mine-msg p:after {
+			right: -10px;
+		}
+		.mine-msg {
+			text-align: right;
+		}
+		.mine-msg .head-img img{
+			float: right;
+		}
+		.mine-msg span {
+			display: block;
+			margin-right: 60px;
+			color: #999;
+		}
+		.mine-msg i {
+			padding-right: 15px;
+		}
+		.mine-msg .msg-con {
+			margin-right: 15px;
+		}
+		.others-msg p:after {
+			left: -10px;
+		}
+		.others-msg {
+			text-align: left;
+		}
+		.others-msg .head-img img{
+			float: left;
+		}
+		.others-msg span {
+			display: block;
+			margin-left: 60px;
+			color: #999;
+		}
+		.others-msg i {
+			padding-left: 15px;
+		}
+		.others-msg .msg-con {
+			margin-left: 15px;
+		}
+		.send-msg {
+			margin-bottom: 10px;
+		}
+		.send-msg textarea {
+			border: none;
+			height: 73px;
+			resize: none;
+			padding: 0;
+		}
+		.layui0row .layui-btn {
+			height: 30px;
+			line-height: 30px;
+		}
+	</style>
+</head>
+<body>
+<div class="layui-container">
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-md-offset4 get-name" style="margin-top: 30%;">
+			<form class="layui-form" method="post">
+				<div class="layui-form-item">
+					<div class="layui-row layui-col-space8">
+						<div class="layui-col-md9">
+							<input type="text" name="name" placeholder="请输入昵称" class="layui-input name">
+						</div>
+						<div class="layui-col-md3">
+							<button type="button" class="layui-btn layui-col-md12">确定</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="layui-col-md-3 layui-col-md-offset9 friend-list">
+			<div class="head">
+				
+			</div>
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this" title="联系人">
+						<i class="layui-icon">&#xe612;</i>
+					</li>
+					<li class="" title="群组">
+						<i class="layui-icon">&#xe613;</i>
+					</li>
+					<li class="" title="历史会话">
+						<i class="layui-icon">&#xe611;</i>
+					</li>
+				</ul>
+				<div class="layui-tab-content">
+					<div class="person layui-tab-item layui-show">
+
+					</div>
+					<div class="layui-tab-item">
+
+					</div>
+					<div class="layui-tab-item ">
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	var ws = new WebSocket("ws://192.168.0.102:9501")
+	ws.open = function() {
+		console.log('link start!')
+	}
+	ws.onclose = function() {
+		console.log('link stop~')
+	}
+	ws.onmessage = function(e) {
+		var data = JSON.parse(e.data)
+		console.log(data)
+		if (data.type == 1) {
+			var htmlstr = ''
+			$.each(data.list, function(k,v) {
+				htmlstr += '<div class="list-item" onclick="open_chat('+v.fd+',\''+v['name']+'\')"><img src="/static/picture/'+v.avatar+'.jpg" /><h3>'+v['name']+'</h3><p>此用户比较懒，没有个人签名</p></div>'
+			})
+			$('.person').empty().append(htmlstr)
+		} else if (data.type == 'head') {
+			$('.head').append('<h2>'+data.name+'</h2><p>testettertreterteter</p>')
+			window.fd_mine = data.fd
+		} else if (data.type == 2) {
+			if (data.fd == fd_mine) {
+				$('.msg-list').append('<li class="mine-msg layui-col-xs12"><div class="head-img"><img src="/static/picture/'+data.avatar+'.jpg" /><span><i>'+data.date+'</i>'+data.name+'</span><p class="msg-con layui-bg-blue">'+data.msg+'</p></div></li>')
+			} else {
+				$('.msg-list').append('<li class="others-msg layui-col-xs12"><div class="head-img"><img src="/static/picture/'+data.avatar+'.jpg" /><span>'+data.name+'<i>'+data.date+'</i></span><p class="msg-con layui-bg-blue">'+data.msg+'</p></div></li>')
+			}
+		}
+	}
+	$('.layui-btn').click(function(){
+		$('.get-name').hide()
+		var name = $('.name').val()
+		if (name.length < 2) {
+			alert('名字过短')
+			location.reload()
+		} else {
+			var txt = {'type':'1','name':name}
+			ws.send(JSON.stringify(txt))
+			$('.friend-list').show()
+		}
+	})
+	$('.friend-list').hide()
+	function open_chat(fd, name) {
+		console.log(name)
+		layui.use('layer', function() {
+			var layer = layui.layer
+			layer.open({
+				type:1,
+				area:['590px','550px'],
+				offset:'auto',
+				scrollbar:false,
+				maxmin:true,
+				shade:0,
+				title:[name,'height:60px;font-size:28px'],
+				content: '<div class="layui-fluid"><div class="layui-row"><div class="layui-col-xs12" style="height: 300px;"><ul class="msg-list"></ul></div></div><div class="layui-row"><div class="layui-col-m12" style="height: 38px;border-top: 1px solid #f1f1f1;"><button type="button" style="border:none;background: none;"><i class="layui-icon" style="font-size: 28px;line-height: 38px;">&#xe60c;</i></button></div></div><div class="layui-row"><div class="layui-col-xs12 send-msg"><textarea name="msg" placeholder="请输入内容" class="layui-textarea"></textarea></div></div><div class="layui-row"><button class="layui-btn" onclick="send('+fd+')">发送</button></div></div>'
+			});
+		})
+	}
+	layui.use('element', function(){
+		var element = layui.element
+		$('.layui-tab-bar').hide()
+	})
+	function send(fd) {
+		var msg = $('.layui-textarea').val()
+		if (msg.length>30) {
+			alert('超出字数限制')
+		} else if (msg.length<1) {
+			alert('请输入内容')
+		} else {
+			var txt = {'type':'2','msg':msg,'fd_other':fd}
+			ws.send(JSON.stringify(txt))
+			$('.layui-textarea').val('');
+		}
+	}
+	$(document).keypress(function(e) {
+		if (e.which == 13) {
+			send()
+		}
+	})
+</script>
+</html>
